@@ -56,6 +56,7 @@ class RegionManager{
 	}
 
 	/*
+		指定した土地の保護を有効化・無効化
 	*/
 	public function setActive(Region $region, bool $value = true):void{
 
@@ -71,18 +72,21 @@ class RegionManager{
 	}
 
 	/*
+		土地が有効化されているか
 	*/
 	public function isActive(Region $region):bool{
 		return in_array($region->getName(), $this->activeRegions(), true);
 	}
 
 	/*
+		土地の名前が既に使われているか
 	*/
 	public function isUsedRegionName(string $regionName):bool{
 		return in_array($regionName, $this->data->getAll(), true);
 	}
 
 	/*
+		名前から土地を取得
 	*/
 	public function getRegionByName(string $regionName):?Region{
 
@@ -93,27 +97,32 @@ class RegionManager{
 	}
 
 	/*
+		指定した領域にある土地を取得
 	*/
 	public function getRegion(Position $pos):?Region{
 
 		foreach($this->activeRegions as $name => $region){
 			$regionPos = $region->getPos();
-			$cor = new Coordinate($regionPos->x, $regionPos->z, $regionPos->level);
+			$cor = new Coordinate($regionPos);
 
 			if($cor->distance(new Coordinate($pos)) <= $region->getDistacne()){
+				if($cor->isEqualLevel(new Coordinate($pos))){
 					return $region;
+				}
 			}
 		}
 		return null;
 	}
 
 	/*
+		指定した場所に土地が設定されているか
 	*/
 	public function isInRegion(Position $pos):bool{
 		return !is_null($this->getRegion($pos));
 	}
 
 	/*
+		土地から配列のデータを取得
 	*/
 	private function conversionToArray(Region $region):array{
 		$pos = $region->getPos();
@@ -134,6 +143,7 @@ class RegionManager{
 	}
 
 	/*
+		配列から土地を取得
 	*/
 	private function conversionToRegion(array $regionData):Region{
 		$server = Server::getInstance();
@@ -152,6 +162,7 @@ class RegionManager{
 	}
 
 	/*
+		ポジションの値を整数化
 	*/
 	private function floorPos(Position $pos):Position{
 		$x = floor($pos->x);
