@@ -18,7 +18,7 @@ class RegionManager{
 
 	public function __construct(Config $regionData){
 		$this->data = $regionData;
-		$this->loadVector();
+		$this->loadRegions();
 		return;
 	}
 
@@ -38,11 +38,14 @@ class RegionManager{
 
 		if($value and !$this->isActive($region)){
 			$activeRegions[$region->getName()] = $region;
+			$this->loadVector();
 			return;
 
 		}elseif($this->isActive($region)){
 			$regions = array_diff($this->activeRegions, [$region->getName()]);
 			$this->activeRegions = array_values($regions);
+			$vectors = array_diff($this->vectors, [$region->getName]);
+			$this->vectors = $vectors;
 			return;
 		}
 	}
@@ -72,9 +75,8 @@ class RegionManager{
 	public function getRegionByName(string $regionName):?Region{
 
 		if($this->data->__isset($regionName)){
-			return $this->data->get($regionName);
+			return $this->conversionToRegion($this->data->get($regionName));
 		}
-
 		return null;
 	}
 
@@ -99,33 +101,38 @@ class RegionManager{
 		return !is_null($this->getRegionExact($pos));
 	}
 
-	private function loadVector():void{
+	private function loadVector(Region $region):void{
+		$pos = $region->getPos();
+		$regionDistance = $region->getDistance();
+		$pos1 = $this->floorPos($pos->add(-$regionDistance, 0, -$regionDistacne));
+		$pos2 = $this->floorPos($pos->add($regionDistacne, 0, $regionDistance));
+		$pos2->y = 255;
 
-		foreach($this->activeRegions as $name => $region){
-			$pos = $region->getPos();
-			$regionDistance = $region->getDistance();
-			$pos1 = $this->floorPos($pos->add(-$regionDistance, 0, -$regionDistacne));
-			$pos2 = $this->floorPos($pos->add($regionDistacne, 0, $regionDistance));
-			$pos2->y = 255;
-
-			for(;; $pos1->x +=1){
+		for(;; $pos1->x +=1){
 				
-				if($this->isInRegion()){
-					$this->vectors[$region->getName()][] = new Coordinate($pos1);
-				}
+			if($this->isInRegion()){
+				$this->vectors[$region->getName()][] = new Coordinate($pos1);
+			}
 
-				if($pos1->x === $pos2->x){
-					$pos1->z += 1;
-					$pos1->x -= $regionDistance;
+			if($pos1->x === $pos2->x){
+				$pos1->z += 1;
+				$pos1->x -= $regionDistance;
 
-					if($pos1->z === $pos2->z){
-						break;
-					}
+				if($pos1->z === $pos2->z){
+					return;;
 				}
 			}
 		}
-		
-	
+	}
+
+	private function loadRegions():void{
+
+		foreach($this->data->getAll() as $name => $regionData){
+			$region = $this->conversionToRegion($regionData);
+			$this->loadVector($region);
+			$this->setActive($region);
+		}
+		return;
 	}
 
 	private function conversionToArray(Region $region):array{

@@ -33,7 +33,6 @@ class Coordinate extends Vector2{
 	public function isEqualLevel(Coordinate $cor):bool{
 
 		if(!is_null($this->level) and !is_null($cor->level)){
-
 			return $this->level->getName() === $cor->getLevel()->getName();
 		}
 		return false;
