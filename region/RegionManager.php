@@ -8,6 +8,8 @@ namespace b\region;
 use pocketmine\level\Position;
 use pocketmine\{Player, Server};
 use pocketmine\utils\Config;
+use b\Core;
+use b\log\Logger;
 
 
 class RegionManager{
@@ -15,13 +17,20 @@ class RegionManager{
 	private $data = null;
 	private $activeRegions = [];
 	private $vectors = [];
-
+	
+	/*
+		土地の保存データを取得
+		保存されている土地内の座標を読み込み
+	*/
 	public function __construct(Config $regionData){
 		$this->data = $regionData;
 		$this->loadRegions();
 		return;
 	}
 
+	/*
+		指定された土地を登録
+	*/
 	public function registerRegion(Region $region):void{
 
 		if($this->isUsedRegionName($region->getName())){
@@ -34,6 +43,22 @@ class RegionManager{
 		return;
 	}
 
+	/*
+		指定された土地を削除
+	*/
+	public function unregisterRegion(Region $region):void{
+		$name = $region->getName();
+
+		if($this->region->__isset($name){
+			$this->region->__unset($name);
+			return;
+		}
+		Core::getLogger()->report(null, Logger::REASON_ERROR, '削除しようとした土地は存在しません{'.$name.'}');
+		return;
+	}
+
+	/*
+	*/
 	public function setActive(Region $region, bool $value = true):void{
 
 		if($value and !$this->isActive($region)){
@@ -50,14 +75,20 @@ class RegionManager{
 		}
 	}
 
+	/*
+	*/
 	public function isActive(Region $region):bool{
 		return in_array($region->getName(), $this->activeRegions(), true);
 	}
 
+	/*
+	*/
 	public function isUsedRegionName(string $regionName):bool{
 		return in_array($regionName, $this->data->getAll(), true);
 	}
 
+	/*
+	*/
 	public function getRegion(Position $pos):?Region{
 
 		foreach($this->vectors as $regionName => $positions){
@@ -72,6 +103,8 @@ class RegionManager{
 		return null;
 	}
 
+	/*
+	*/
 	public function getRegionByName(string $regionName):?Region{
 
 		if($this->data->__isset($regionName)){
@@ -80,6 +113,8 @@ class RegionManager{
 		return null;
 	}
 
+	/*
+	*/
 	public function getRegionExact(Position $pos):?Region{
 
 		foreach($this->activeRegions as $name => $region){
@@ -93,20 +128,25 @@ class RegionManager{
 		return null;
 	}
 
+	/*
+	*/
 	public function isInRegion(Position $pos):bool{
 		return !is_null($this->getRegion($pos));
 	}
 
+	/*
+	*/
 	public function isInRegionExact(Position $pos):bool{
 		return !is_null($this->getRegionExact($pos));
 	}
 
+	/*
+	*/
 	private function loadVector(Region $region):void{
 		$pos = $region->getPos();
 		$regionDistance = $region->getDistance();
 		$pos1 = $this->floorPos($pos->add(-$regionDistance, 0, -$regionDistacne));
 		$pos2 = $this->floorPos($pos->add($regionDistacne, 0, $regionDistance));
-		$pos2->y = 255;
 
 		for(;; $pos1->x +=1){
 				
@@ -119,12 +159,14 @@ class RegionManager{
 				$pos1->x -= $regionDistance;
 
 				if($pos1->z === $pos2->z){
-					return;;
+					return;
 				}
 			}
 		}
 	}
 
+	/*
+	*/
 	private function loadRegions():void{
 
 		foreach($this->data->getAll() as $name => $regionData){
@@ -135,6 +177,8 @@ class RegionManager{
 		return;
 	}
 
+	/*
+	*/
 	private function conversionToArray(Region $region):array{
 		$pos = $region->getPos();
 		
@@ -153,6 +197,8 @@ class RegionManager{
 		];
 	}
 
+	/*
+	*/
 	private function conversionToRegion(array $regionData):Region{
 		$server = Server::getInstance();
 		$posData = $regionData['POS'];
@@ -169,6 +215,8 @@ class RegionManager{
 		return $region;
 	}
 
+	/*
+	*/
 	private function floorPos(Position $pos):Position{
 		$x = floor($pos->x);
 		$y = floor($pos->y);
