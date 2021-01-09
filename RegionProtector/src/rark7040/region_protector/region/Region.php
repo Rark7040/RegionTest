@@ -22,12 +22,10 @@ class Region{
 		$this->pos = $pos;
 		$this->distacne = 10;
 		$this->protect = false;
-		return;
 	}
 
 	public function setName(string $name):void{
 		$this->name = $name;
-		return;
 	}
 
  	public function getName():string{
@@ -37,16 +35,18 @@ class Region{
  	public function setHolder(string $holderName):void{
  		$this->holder = $holder;
  		$this->user[] = $holder;
- 		return;
  	}
 
  	public function getHolder():string{
  		return $this->holder;
  	}
 
+ 	public function isHolder(string $holderName):bool{
+ 		return $holderName === $this->holder;
+ 	}
+
  	public function addUser(string $userName):void{
  		$this->users[] = $userName;
- 		return;
  	}
 
  	public function removeUser(string $userName):bool{
@@ -70,12 +70,10 @@ class Region{
 
  	public function setUsers(array $users):void{
  		$this->users = $users;
- 		return;
  	}
 
  	public function setPos(Position $pos):void{
  		$this->pos1 = $pos;
- 		return;
  	}
 
  	public function getPos():Position{
@@ -84,7 +82,6 @@ class Region{
 
  	public function setDistance(float $distance):void{
  		$this->distance = $distance;
- 		return;
  	}
 
  	public function getDistance():float{
@@ -93,7 +90,6 @@ class Region{
 
  	public function setProtect(bool $value):void{
  		$this->protect = $value;
- 		return;
  	}
 
  	public function isProtected():bool{

@@ -34,7 +34,6 @@ class RegionCrystal extends Entity{
 		parent::__construct($pos->level, $nbt);
 		Main::registerRegionCrystal($this);
 		$this->spawnToAll();
-		return;
 	}
 
 	public function getName():string{
@@ -47,7 +46,6 @@ class RegionCrystal extends Entity{
 		$this->teleport($this->add(0, -255, 0));
 		$this->health = 0;
 		$this->scheduleUpdate();
-		return;
 	}
 
 	public function entityBaseTick(int $tick = 10):bool{
@@ -93,6 +91,5 @@ class RegionCrystal extends Entity{
 			$event = new EntityDamageByEntityEvent($this, $player, EntityDamageEvent::CAUSE_MAGIC, 0, [], 3);
 			$event->call();
 		}
-		return;
 	}
 }

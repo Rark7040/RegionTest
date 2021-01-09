@@ -18,7 +18,6 @@ class BlockEventListener implements Listener{
 
 		if(isNeedCancelled($event, $event->getBlock())){
 			$event->setCancelled();
-			return;
 		}
 	}
 
@@ -26,7 +25,6 @@ class BlockEventListener implements Listener{
 
 		if(isNeedCancelled($event, $event->getBlock())){
 			$event->setCancelled();
-			return;
 		}
 	}
 }

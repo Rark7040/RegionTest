@@ -27,7 +27,6 @@ class RegionManager{
 	public function __construct(Config $regionData){
 		$this->data = $regionData;
 		$this->load();
-		return;
 	}
 
 	/*
@@ -71,12 +70,10 @@ class RegionManager{
 
 		if($value and !$this->isActive($region)){
 			$activeRegions[$region->getName()] = $region;
-			return;
 
 		}elseif($this->isActive($region)){
 			$regions = array_diff($this->activeRegions, [$region->getName()]);
 			$this->activeRegions = array_values($regions);
-			return;
 		}
 	}
 
@@ -217,6 +214,5 @@ class RegionManager{
 		foreach($regions as $region){
 			$this->setActive($region);
 		}
-		return;
 	}
 }

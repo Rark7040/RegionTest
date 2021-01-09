@@ -21,7 +21,6 @@ class Coordinate extends Vector2{
 			$x = $pos->x;
 		}
 		parent::__construct($x, $y);
-		$this->level = $level;
 	}
 
 	public function asVector2():Vector2{

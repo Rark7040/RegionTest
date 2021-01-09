@@ -11,7 +11,7 @@ use pocketmine\event\entity\{
 	EntityDamageEvent,
 	EntityDamageByEntityEvent
 };
-use rark7040\region_protector\form\list\MenuForm;
+use rark7040\region_protector\form\simple\MenuForm;
 
 class EntityEventListener implements Listener{
 
@@ -19,30 +19,30 @@ class EntityEventListener implements Listener{
 		$manager = Main::getRegionManager();
 		$region = $manager->getRegion($event->getEntity());
 
-		if(!is_null($region)){
+		if(is_null($region)){
 			return;
+		}
 
-		}elseif($region->isProtected()){
+		if($region->isProtected()){
 			$event->setBlockBreaking(false);
-			return;
 		}
 	}
 
 	public function onDamage(EntityDamageEvent $event):void{
+		$entity = $event->getEntity();
 
-		if($event->getEntity() instanceof RegionCrystal){
-
-			if($event instanceof EntityDamageByEntityEvent){
-				$damager = $event->getDamager();
-
-				if($damager instanceof Player){
-					$damager->sendForm(new MenuForm($damager));
-				}
-			}
-			$event->setCancelled();
+		if(!$entity instanceof RegionCrystal){
 			return;
 		}
-		return;
+
+		if($event instanceof EntityDamageByEntityEvent){
+			$damager = $event->getDamager();
+
+			if($damager instanceof Player){
+				$damager->sendForm(new MenuForm($damager, $entity->region));
+			}
+		}
+		$event->setCancelled();
 	}
 
 

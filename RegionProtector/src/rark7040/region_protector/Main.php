@@ -40,7 +40,6 @@ final class Main extends PluginBase{
 		$this->setEntity();
 		$this->addItem();
 		$this->manager = new RegionManager($this->configs[self::CONFIG_REGION]);
-		return;
 	}
 
 	public function onDisable(){
@@ -49,7 +48,6 @@ final class Main extends PluginBase{
 		foreach($this->configs as $key => $config){
 			$config->save();
 		}
-		return;
 	}
 
 	public static function getRegionManager():RegionManager{
@@ -62,31 +60,27 @@ final class Main extends PluginBase{
 
 	public static function registerRegionCrystal(RegionCrystal $crystal):void{
 		$this->crystals[$crystal->region->getName()] = $crystal;
-		return;
 	}
 
 	public static function unregisterRegionCrystal():void{
 		$crystals = array_diff($this->crystals, [$crystal->region->getName()]);
 		$this->crystals = array_values($crystals);
-		return;
 	}
 
 	private function createConfig():void{
 		$path = $this->getDataFolder();
 		$defautlData = [
-			'price' => 10000,
-			'update' => 50000,
+			'price' => 30000,
+			'update' => 10000,
 			'amount' => 3,
 			'max_distance' => 50
 		];
 		$this->config[self::CONFIG_SETTING] = new Config($path.'Config.yaml', Config::YAML, $defaultData);
 		$this->configs[self::CONFIG_REGION] = new Config($path.'Regions.yaml', Config::YAML);
-		return;
 	}
 
 	private function setSchedule():void{
 		$this->getScheduler()->scheduleRepeatingTask(new RegionTask(), 1);
-		return;
 	}
 
 	private function registerListener():void{
@@ -100,26 +94,21 @@ final class Main extends PluginBase{
 		foreach($listeners as $listener){
 			$this->server->getPluginManager()->registerEvents($listener, $this);
 		}
-		return;
 	}
 
 	private function registerCommand():void{
 		$this->server->getCommandMap()->registerAll('RegionProtector', [
 			//Todo
 		]);
-		return;
 	}
 
 	private function setEntity():void{
 		Entity::registerEntity(RegionCrystal::class, false, ['RegionCrystal', 'plugin::region_crystal']);
-		return
 	}
 
 	private function addItem():void{
-		$config = $this->configs[self::CONFIG_SETTING];
 		$this->item = Item::get(426);
 		$this->item->setCustomName('RegionCrystal');
 		Item::addCreativeItem($this->item);
-		return;
 	}
 }

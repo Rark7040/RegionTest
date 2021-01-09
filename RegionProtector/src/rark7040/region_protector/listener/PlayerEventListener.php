@@ -17,14 +17,12 @@ class PlayerEventListener implements Listener{
 	public function onBlockPick(PlayerBlockPickEvent $event):void{
 		if(isNeedCancelled($event, $event->getBlock())){
 			$event->setCancelled();
-			return;
 		}
 	}
 
 	public function onInteract(PlayerInteractEvent $event):void{
 		if(isNeedCancelled($event, $event->getBlock())){
 			$event->setCancelled();
-			return;
 		}
 	}
 }

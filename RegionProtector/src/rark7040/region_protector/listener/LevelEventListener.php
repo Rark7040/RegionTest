@@ -19,7 +19,6 @@ class LevelEventListener implements Listener{
 
 	public function __construct(){
 		$this->manager = Main::getRegionManager();
-		return;
 	}
 
 	public function onLoad(LevelLoadEvent $event):void{//手抜きです許してください！　何でもしますから！
@@ -32,7 +31,6 @@ class LevelEventListener implements Listener{
 				$this->manager->setActive($region);
 			}
 		}
-		return;
 	}
 
 	public function onUnload(LevelUnloadEvent $event):void{
@@ -45,6 +43,5 @@ class LevelEventListener implements Listener{
 				$this->manager->setActive($region, false);
 			}
 		}
-		return;
 	}
 }
