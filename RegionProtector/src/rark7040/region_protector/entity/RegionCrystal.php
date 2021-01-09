@@ -55,6 +55,7 @@ class RegionCrystal extends Entity{
 		if($this->region->isProtedted() or !$manager->isActive($this->region)){
 			return $hasUpdate;
 		}
+		$players = [];
 
 		foreach(Server::getInstance()->getOnlinePlayers() as $player){
 
@@ -63,22 +64,16 @@ class RegionCrystal extends Entity{
 				if($player->getLevel()->getName() === $this->region->getPos()->level->getName()){
 
 					if($this->distance($player) <= $this->region->getDistance()){
-						$this->sendKnockbackAction($player);
+						$players[] = $player;
 					}
 				}
 			}
 		}
+		$this->atackAction($players);
 		return $hasUpdate;
 	}
 
-	private function sendKnockbackAction(Player $player):void{
-		$this->attackAction();
-		$event = new EntityDamageByEntityEvent($this, $player, EntityDamageEvent::CAUSE_MAGIC, 0, [], 3);
-		$event->call();
-		return;
-	}
-
-	private function attackAction():void{
+	private function attackAction(array $player):void{
 		$pos = $this->region->getPos();
 	
 		for($d = 0; $d <= $this->regon->getDistance(); $d += 3){
@@ -89,6 +84,11 @@ class RegionCrystal extends Entity{
 				$pos->add($x, 0, $z);
 				$pos->level->addParticle(new ExplodeParticle($pos));
 			}
+		}
+
+		foreach($players as $player){
+			$event = new EntityDamageByEntityEvent($this, $player, EntityDamageEvent::CAUSE_MAGIC, 0, [], 3);
+			$event->call();
 		}
 		return;
 	}

@@ -5,12 +5,12 @@ declare(strict_types = 1);
 
 namespace rark7040\region_protector;
 
-use rark7040\region_protector\Main;
 use pocketmine\event\Listener;
 use pocketmine\event\level\{
 	LevelLoadEvent,
 	LevelUnloadEvent
 };
+use rark7040\region_protector\Main;
 
 
 class LevelEventListener implements Listener{

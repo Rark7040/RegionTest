@@ -13,7 +13,8 @@ use pocketmine\entity\Entity;
 use rark7040\region_protector\listener\{
 	PlayerEventListener,
 	BlockEventListener,
-	LevelEventListener
+	LevelEventListener,
+	EntityEventListener
 };
 use rark7040\region_protector\task\RegionTask;
 use rark7040\region_protector\entity\RegionCrystal;
@@ -89,7 +90,8 @@ final class Main extends PluginBase{
 		$listeners = [
 			new PlayerEventListener,
 			new BlockEventListener,
-			new LevelEventListener
+			new LevelEventListener,
+			new EntityEventListener
 		];
 
 		foreach($listeners as $listener){
@@ -100,8 +102,7 @@ final class Main extends PluginBase{
 
 	private function registerCommand():void{
 		$this->server->getCommandMap()->registerAll('RegionProtector', [
-
-
+			//Todo
 		]);
 	}
 

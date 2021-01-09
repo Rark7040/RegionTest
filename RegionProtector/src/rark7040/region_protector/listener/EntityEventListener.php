@@ -5,14 +5,13 @@ declare(strict_types = 1);
 
 namespace rark7040\region_protector;
 
-use rark7040\region_protector\form\list\MenuForm;
 use pocketmine\event\Listener;
 use pocketmine\event\entity\{
 	ExplosionPrimeEvent,
 	EntityDamageEvent,
 	EntityDamageByEntityEvent
 };
-
+use rark7040\region_protector\form\list\MenuForm;
 
 class EntityEventListener implements Listener{
 
