@@ -20,11 +20,12 @@ class RegionCrystal extends Entity{
 	public $region = null;
 	public $height = 2;
 
-	public function __construct(Position $pos, Region $region){
+	public function __construct(Region $region){
 		$this->region = $region;
 		$this->namedtag->setString('id', $this->getSaveId(), true);
 		$this->namedtag->setString('CustomName', $this->getName());
 		$this->nametag->setByte('CustomNameVisible', 1);
+		$pos = $region->getPos();
 		$nbt = new ListTag('Pos', [
 			new DoubleTag('', $pos->x),
 			new DoubleTag('', $pos->y),
@@ -42,9 +43,11 @@ class RegionCrystal extends Entity{
 
 	public function kill():void{
 		Main::getRegionManager()->unregisterRegion($this->region);
+		Main::unregisterRegionCrystal($this);
 		$this->teleport($this->add(0, -255, 0));
 		$this->health = 0;
 		$this->scheduleUpdate();
+		return;
 	}
 
 	public function entityBaseTick(int $tick = 10):bool{

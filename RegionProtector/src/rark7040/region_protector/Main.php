@@ -29,6 +29,7 @@ final class Main extends PluginBase{
 	private $server = null;
 	private $manager = null;
 	private $item = null;
+	public  $crystals = [];
 
 	public function onEnable(){
 		$this->server = $this->getServer();
@@ -65,7 +66,9 @@ final class Main extends PluginBase{
 	}
 
 	public static function unregisterRegionCrystal():void{
-		$crystals = $
+		$crystals = array_diff($this->crystals, [$crystal->region->getName()]);
+		$this->crystals = array_values($crystals);
+		return;
 	}
 
 	private function createConfig():void{
@@ -104,10 +107,12 @@ final class Main extends PluginBase{
 		$this->server->getCommandMap()->registerAll('RegionProtector', [
 			//Todo
 		]);
+		return;
 	}
 
 	private function setEntity():void{
 		Entity::registerEntity(RegionCrystal::class, false, ['RegionCrystal', 'plugin::region_crystal']);
+		return
 	}
 
 	private function addItem():void{
@@ -117,5 +122,4 @@ final class Main extends PluginBase{
 		Item::addCreativeItem($this->item);
 		return;
 	}
-
 }
