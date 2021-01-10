@@ -5,22 +5,12 @@ declare(strict_types = 1);
 
 namespace rark7040\region_protector\form\simple;
 
-use pocketmine\form\Form;
+use rark7040\region_protector\form\BaseForm;
 
 
 abstract class SimpleForm extends BaseForm{
 
-	private $label = '';
-
-	abstract public function simpleFormHandler(Player $player, int $data):void;
-
-	protected function setTitle(string $title):void{
-		$this->title = $title;
-	}
-
-	protected function setLabel(string $label):void{
-		$this->label = $label;
-	}
+	abstract protected function simpleFormHandler(Player $player, int $data):void;
 
 	protected function setButton(string $text, string $icon = null):void{
 		$this->contents[] = ['text' => $text, 'data' => $icon];
@@ -36,6 +26,9 @@ abstract class SimpleForm extends BaseForm{
 	}
 
 	protected function formHandler(Player $player, $data):void{
+		if($this->is_null_data){
+			return;
+		}
 		$this->simpleFormHandler($player, $data);
 	}
 }

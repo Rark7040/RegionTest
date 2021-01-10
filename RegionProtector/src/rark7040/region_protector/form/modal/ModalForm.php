@@ -5,20 +5,12 @@ declare(strict_types = 1);
 
 namespace rark7040\region_protector\form\modal;
 
+use rark7040\region_protector\form\BaseForm;
+
 
 abstract class ModalForm extends BaseForm{
 
-	protected $labal = '';
-
-	abstract protected function modalFormHandler(Player $player, int $data):void;
-
-	protected function setTitle(string $title){
-		$this->title = $title;
-	}
-
-	protected function setText(string $label):void{
-		$this->label = $label;
-	}
+	abstract protected function modalFormHandler(Player $player, ?bool $data):void;
 
 	protected function setButton(bool $value, string $text):void{
 		$this->contents[$value] = $text;
