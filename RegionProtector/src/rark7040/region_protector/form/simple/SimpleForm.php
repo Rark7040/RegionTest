@@ -10,24 +10,32 @@ use pocketmine\form\Form;
 
 abstract class SimpleForm extends BaseForm{
 
-	protected $title = null;
-	protected $label = null;
-	protected $buttons = [];
+	private $label = '';
 
-	public function __construct(string $title, string $label){
+	abstract public function simpleFormHandler(Player $player, int $data):void;
+
+	protected function setTitle(string $title):void{
 		$this->title = $title;
+	}
+
+	protected function setLabel(string $label):void{
 		$this->label = $label;
 	}
 
-	public function setButton(string $text, string $icon = null):void{
-		$this->buttons[] = ['text' => $text, 'data' => $icon];
+	protected function setButton(string $text, string $icon = null):void{
+		$this->contents[] = ['text' => $text, 'data' => $icon];
 	}
 
-	public function getFormData():array{
+	protected function getFormData():array{
 		return [
+			'type' => 'form',
 			'title' => $this->title,
 			'contents' => $this->label,
-			'buttons' => $this->buttons
+			'buttons' => $this->contents
 		];
+	}
+
+	protected function formHandler(Player $player, $data):void{
+		$this->simpleFormHandler($player, $data);
 	}
 }

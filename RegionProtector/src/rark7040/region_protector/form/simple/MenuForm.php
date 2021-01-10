@@ -7,23 +7,24 @@ namespace rark7040\region_protector\form\simple;
 
 use pocketmine\Player;
 use rark7040\region_protector\region\Region;
+use rark7040\region_protector\form\simple\{
+	RegionDataForm,
+	ViewUsersForm,
+	EditRedionForm
+};
+use rark7040\region_protector\form\modal\SpreadRegionForm;
+use rark7040\region_protector\form\custom\{
+	ChangeHolderForm,
+	MoveRegionForm
+};
 
-class MenuForm extends SimpleForm{
+final class MenuForm extends SimpleForm{
 
-	private const TITLE = 'RegionMenu';
-	private const LABEL = '行動を選択してください';
-	private const OP = 0;
-	private const HOLDER = 1;
-	private const USER = 2;
-
-	private $manager = null;
 	private $region = null;
-	private $viewer_type = false;
-	private $viewer = null;
 
 	public function __construct(Player $player, Region $region){
-		parent::__construct(self::TITLE, self::LABEL);
-		$this->manager = Main::getRegionManager();
+		$this->title = 'RegionMenu';
+		$this->label = '行動を選択してください';
 		$this->region = $region;
 		$this->createButtons($player);
 	}
@@ -32,17 +33,17 @@ class MenuForm extends SimpleForm{
 		
 		switch(true){
 			case $player->isOp:
-				$this->viewer_type = self::OP;
+				$this->viewer_type = self::TYPE_OP;
 				$this->region('<<Back');
 				$this->setButton('情報を見る');
 				$this->setButton('所有者を変更する');
-				$this->setButton('保護を解除する');
+				$this->setButton('領域を編集する');
 			break;
 
 			case $this->region->issetUser($player->getName()):
 
 				if($region->isHolder($player->getName())){
-					$this->viewer_type = self::HOLDER;
+					$this->viewer_type = self::TYPE_HOLDER;
 					$this->setButton('<<Back');
 					$this->setButton('情報を見る');
 					$this->setButton('保護範囲を拡大する');
@@ -51,7 +52,7 @@ class MenuForm extends SimpleForm{
 					$this->setButton('領域を譲渡する');
 					return;
 				}
-				$this->viewer_type = self::USER;
+				$this->viewer_type = self::TYPE_USER;
 				$this->setButton('<<Back');
 				$this->setButton('情報を見る');
 				$this->setButton('共同利用者を確認する');
@@ -59,27 +60,27 @@ class MenuForm extends SimpleForm{
 		}
 	}
 
-	public function formHandler(Player $player, int $data):void{
+	public function simpleFormHandler(Player $player, int $data):void{
 		$this->viewer = $player;
 
 		if($data === 0){
-			$viewer->sendForm(new RegionDataForm());
+			$viewer->sendForm(new RegionDataForm($this->region));
 
 		}elseif($data === 1){
 			return;
 		}
 
 		switch($this->viewer_type){
-			case self::OP:
+			case self::TYPE_OP:
 				$this->opProcess($data);
 			break;
 
-			case self::HOLDER:
+			case self::TYPE_HOLDER:
 				$this->holderProcess($data);
 			break;
 
-			case self::USER:
-				$this->userProcess($data);
+			case self::TYPE_USER:
+				$this->viewer->sendForm(new ViewUsersForm($this->region));
 			break;
 		}
 	}
@@ -88,11 +89,11 @@ class MenuForm extends SimpleForm{
 		
 		switch($data){
 			case 2;
-				$this->viewer->sendForm(new ChangeHolderForm());
+				$this->viewer->sendForm(new ChangeHolderForm($this->region));
 			break;
 
 			case 3:
-				$this->viewer->sendForm(new UnprotectedForm());
+				$this->viewer->sendForm(new EditRegionForm($this->region));
 			break;
 		}
 	}
@@ -101,26 +102,20 @@ class MenuForm extends SimpleForm{
 
 		switch($data){
 			case 2;
-				$this->viewer->sendForm(new SpreadRegionForm($this->viewer));
+				$this->viewer->sendForm(new SpreadRegionForm($this->region));
 			break;
 
 			case 3:
-				$this->viewer->sendForm(new EditRegionForm());
+				$this->viewer->sendForm(new EditRegionForm($this->region));
 			break;
 
 			case 4:
-				$this->viewer->sendForm(new MoveRegionForm());
+				$this->viewer->sendForm(new MoveRegionForm($this->region));
 			break;
 
 			case 5:
-				$this->viewer->sendForm(new ChangeHolderForm());
+				$this->viewer->sendForm(new ChangeHolderForm($this->region));
 			break;
 		}
 	}
-
-	private function userProcess(int $data):void{
-		
-	}
-
-
 }

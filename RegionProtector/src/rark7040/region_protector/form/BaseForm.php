@@ -10,15 +10,28 @@ use pocketmine\Player;
 
 abstract class BaseForm implements Form{
 
-	abstract public function getFormData():array;
+	protected const TYPE_OP = 0;
+	protected const TYPE_HOLDER = 1;
+	protected const TYPE_USER = 2;
 
-	abstract public function formHandler(Player $player, $data):void;
+	protected $title = '';
+	protected $contents = [];
+	protected $viewer = null;
+	protected $viewer_type = null;
+
+	abstract protected function getFormData():array;
+
+	abstract protected function formHandler(Player $player, $data):void;
 
 	public function jsonSerialize(){
 		return $this->getFormData();
 	}
 
 	public function handleResponse(Player $player, $data):void{
+
+		if(is_null($data)){
+			return;
+		}
 		$this->handle($player, $data);
 	}
 }
