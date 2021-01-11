@@ -5,6 +5,7 @@ declare(strict_types = 1);
 
 namespace rark7040\region_protector\form\simple;
 
+use pocketmine\Player;
 use rark7040\region_protector\form\BaseForm;
 
 
@@ -26,9 +27,6 @@ abstract class SimpleForm extends BaseForm{
 	}
 
 	protected function formHandler(Player $player, $data):void{
-		if($this->is_null_data){
-			return;
-		}
 		$this->simpleFormHandler($player, $data);
 	}
 }

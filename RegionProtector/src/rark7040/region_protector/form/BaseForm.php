@@ -19,7 +19,6 @@ abstract class BaseForm implements Form{
 	protected $contents = [];
 	protected $viewer = null;
 	protected $viewer_type = null;
-	protected $is_null_data = false;
 
 	abstract protected function getFormData():array;
 
@@ -41,7 +40,7 @@ abstract class BaseForm implements Form{
 	public function handleResponse(Player $player, $data):void{
 
 		if(is_null($data)){
-			$this->is_null_data = true;
+			return;
 		}
 		$this->formHandler($player, $data);
 	}

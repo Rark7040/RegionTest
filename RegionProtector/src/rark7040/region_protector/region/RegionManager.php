@@ -34,7 +34,7 @@ class RegionManager{
 	*/
 	public function registerRegion(Region $region):int{
 
-		if($this->isUsedRegionName($region->getName())){
+		if($this->isRegisteredRegion($region)){
 			$region->setName($region->getName().mt_rand(0, 9999));
 			$this->registerRegion($region);
 			return self::ERROR_NAME_USED;
@@ -61,17 +61,32 @@ class RegionManager{
 			return true;
 		}
 		return false;
-	} 
+	}
+
+	public function isRegisteredRegion(Region $region):bool{
+		return in_array($region->getName(), $this->data->getAll(), true);
+	}
+
+	public function updateRegion(Region $region):bool{
+
+		if($this->isRegisteredRegion($region)){
+			$this->data->set($region->getName(), $this->conversionToArray($region));
+			$this->data->save();
+			return true;
+		}
+		return false;
+	}
 
 	/*
 		指定した土地の保護を有効化・無効化
 	*/
 	public function setActive(Region $region, bool $value = true):void{
+		$bool = $this->isActive($region);
 
-		if($value and !$this->isActive($region)){
+		if($value and !$bool){
 			$activeRegions[$region->getName()] = $region;
 
-		}elseif($this->isActive($region)){
+		}elseif($bool){
 			$regions = array_diff($this->activeRegions, [$region->getName()]);
 			$this->activeRegions = array_values($regions);
 		}
@@ -91,13 +106,6 @@ class RegionManager{
 			$redions[] = $this->conversionToRegion($regionData);
 		}
 		return $regions;
-	}
-
-	/*
-		土地の名前が既に使われているか
-	*/
-	public function isUsedRegionName(string $regionName):bool{
-		return in_array($regionName, $this->data->getAll(), true);
 	}
 
 	/*
