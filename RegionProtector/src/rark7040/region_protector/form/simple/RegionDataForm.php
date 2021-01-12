@@ -14,9 +14,9 @@ final class RegionDataForm extends SimpleForm{
 
 	public function __construct(Region $region){
 		$this->title = 'データ';
+		$this->region = $region;
 		$this->createLabel();
 		$this->setButton('<<Back');
-		$this->region = $region;
 	}
 
 	private function createLabel():void{
@@ -35,6 +35,6 @@ final class RegionDataForm extends SimpleForm{
 	}
 
 	protected function simpleFormHandler(Player $player, int $data):void{
-		$player->snedForm(new MainForm($player, $this->region));
+		$player->sendForm(new MenuForm($player, $this->region));
 	}
 }

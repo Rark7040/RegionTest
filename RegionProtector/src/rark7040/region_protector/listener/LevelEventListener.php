@@ -21,7 +21,7 @@ class LevelEventListener implements Listener{
 		$this->manager = Main::getRegionManager();
 	}
 
-	public function onLoad(LevelLoadEvent $event):void{//手抜きです許してください！　何でもしますから！
+	public function onLoad(LevelLoadEvent $event):void{
 		$level = $event->getLevel();
 		$regions = $this->manager->getAll();
 

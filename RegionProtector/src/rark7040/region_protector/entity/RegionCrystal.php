@@ -23,7 +23,7 @@ class RegionCrystal extends Entity{
 	public function __construct(Region $region){
 		$this->region = $region;
 		$this->namedtag->setString('id', $this->getSaveId(), true);
-		$this->namedtag->setString('CustomName', $this->getName());
+		$this->namedtag->setString('CustomName', $this->region->getName());
 		$this->nametag->setByte('CustomNameVisible', 1);
 		$pos = $region->getPos();
 		$nbt = new ListTag('Pos', [

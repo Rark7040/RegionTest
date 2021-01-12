@@ -7,7 +7,6 @@ namespace rark7040\region_protector\form\custom;
 
 use pocketmine\Player;
 use rark7040\region_protector\form\BaseForm;
-use function strval;
 
 
 abstract class CustomForm extends BaseForm{

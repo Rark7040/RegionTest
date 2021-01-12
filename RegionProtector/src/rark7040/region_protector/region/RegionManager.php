@@ -8,7 +8,8 @@ namespace rark7040\region_protector\region;
 use pocketmine\level\Position;
 use pocketmine\{Player, Server};
 use pocketmine\utils\Config;
-use function floor;
+use rark7040\region_protector\Main;
+use rark7040\region_protector\entity\RegionCrystal;
 
  
 class RegionManager{
@@ -17,15 +18,16 @@ class RegionManager{
 	public const ERROR_NAME_USED = 1;
 	public const ERROR_REGION_DUPLICATE = 2;
 
-	private $data = null;
+	private $region_data = null;
 	private $activeRegions = [];
+	private $crystals = [];
 
 	/*
 		土地の保存データを取得
 		保存されている土地内の座標を読み込み
 	*/
-	public function __construct(Config $regionData){
-		$this->data = $regionData;
+	public function __construct(Config $region_data){
+		$this->region_data = $region_data;
 		$this->load();
 	}
 
@@ -43,6 +45,7 @@ class RegionManager{
 			return self::ERROR_REGION_DUPLICATE;
 		}
 
+		$this->registerRegionCrystal(new RegionCrystal($region));
 		$this->data->set($region->getName(), $this->conversionToArray($region));
 		$this->data->save();
 		return self::SUCCES_REGISTER;
@@ -54,24 +57,51 @@ class RegionManager{
 	public function unregisterRegion(Region $region):bool{
 		$name = $region->getName();
 
-		if($this->data->__isset($name)){
+		if($this->isRegisteredRegion($region)){
+			$this->unregisterRegionCrystal($this->crystals[$region->getName()]);
 			$this->setActive($region, fasle);
-			$this->data->__unset($name);
-			$this->data->save();
+			$this->region_data->__unset($name);
+			$this->region_data->save();
 			return true;
 		}
 		return false;
 	}
 
 	public function isRegisteredRegion(Region $region):bool{
-		return in_array($region->getName(), $this->data->getAll(), true);
+		return $this->region_data->__isset($name);
+	}
+
+	public function registerRegionCrystal(RegionCrystal $crystal):void{
+		$this->crystals[$crystal->region->getName()] = $crystal;
+	}
+
+	public function unregisterRegionCrystal(RegionCrystal $crystal):void{
+
+		if(!$this->isRegisteredCrystal()){
+			return;
+		}
+		$crystal->kill();
+		$crystals = array_diff($this->crystals, [$crystal->region->getName()]);
+		$this->crystals = array_values($crystals);
+	}
+
+	public function isRegisteredCrystal(RegionCrystal $crystal):bool{
+		return in_array($crystal->region->getName(), $this->crystals, true);
+	}
+
+	public function getRegionCrystal(Region $region):?RegionCrystal{
+
+		if(!in_array($region->getName(), $this->crystals, true)){
+			return null;
+		}
+		return $this->crystals[$region->getName()];
 	}
 
 	public function updateRegion(Region $region):bool{
 
 		if($this->isRegisteredRegion($region)){
-			$this->data->set($region->getName(), $this->conversionToArray($region));
-			$this->data->save();
+			$this->region_data->set($region->getName(), $this->conversionToArray($region));
+			$this->region_data->save();
 			return true;
 		}
 		return false;
@@ -113,8 +143,8 @@ class RegionManager{
 	*/
 	public function getRegionByName(string $regionName):?Region{
 
-		if($this->data->__isset($regionName)){
-			return $this->conversionToRegion($this->data->get($regionName));
+		if($this->region_data->__isset($regionName)){
+			return $this->conversionToRegion($this->region_data->get($regionName));
 		}
 		return null;
 	}
@@ -144,6 +174,37 @@ class RegionManager{
 	*/
 	public function isInRegion(Position $pos):bool{
 		return !is_null($this->getRegion($pos));
+	}
+
+	public function getHasRegions(Player $player):int{
+		$has_region_amount = 0;
+
+		foreach($this->getAllRegions() as $region){
+			if($this->player->getName() === $region->getHolder()){
+				$has_region_amount++;
+			}
+		}
+		return $has_region_amount;
+	}
+
+	/*
+		土地がほかの土地と重なっているか
+	*/
+	public function isDuplicate(Region $region):bool{
+		$regions = $this->getAllRegions();
+
+		foreach($regions as $reg){
+			$cor1 = new Coordinate($reg->getPos());
+			$cor2 = new Coordinate($region->getPos());
+
+			if($cor1->isEqualLevel($cor2)){
+
+				if($cor1->distance($cor2) <= Main::getConfig()->get('max_distance') * 2){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/*
@@ -194,26 +255,6 @@ class RegionManager{
 		$y = floor($pos->y);
 		$z = floor($pos->z);
 		return new Position($x, $y, $z, $pos->level);
-	}
-
-	/*
-		土地がほかの土地と重なっているか
-	*/
-	private function isDuplicate(Region $region):bool{
-		$regions = $this->getAllRegions();
-
-		foreach($regions as $reg){
-			$cor1 = new Coordinate($reg->getPos());
-			$cor2 = new Coordinate($region->getPos());
-
-			if($cor1->isEqualLevel($cor2)){
-
-				if($cor1->distance($cor2) <= $reg->getDistance() or $cor2->distance($cor1) <= $region->getDistacne()){
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 	private function load():void{

@@ -9,7 +9,6 @@ use rark7040\region_protector\region\Region;
 use rark7040\region_protector\form\simple\{MenuForm, MessageForm};
 use rark7040\region_protector\Main;
 use onebone\economyapi\EconomyAPI;
-use function intval;
 
 
 final class SpreadRegionForm extends ModalForm{
@@ -22,13 +21,13 @@ final class SpreadRegionForm extends ModalForm{
 
 	public function __construct(Player $player, Region $region){
 		$this->title = '領域の拡張';
-		$this->createLabel();
-		$this->setButton(true, '拡張する');
-		$this->setButton(false, '戻る');
 		$this->api = EconomyAPI::getInstance();
 		$this->player = $player;
 		$this->region = $region;
 		$this->price = Main::getConfig()->get('update');
+		$this->createLabel();
+		$this->setButton(true, '拡張する');
+		$this->setButton(false, '戻る');
 	}
 
 	private function createLabel():void{

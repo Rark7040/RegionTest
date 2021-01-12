@@ -17,9 +17,9 @@ final class AddUserForm extends CustomForm{
 	private $online_names = null;
 
 	public function __construct(Region $region){
-		$this->createContents();
 		$this->onlines = Server::getInstance()->getOnlinePlayers();
 		$this->region = $region;
+		$this->createContents();
 	}
 
 	private function createContents():void{
@@ -28,12 +28,12 @@ final class AddUserForm extends CustomForm{
 		foreach($this->onlines as $player){
 			$names[] = $player->getName();
 		}
-		$this->setDropdown('誰を追加しますか？', $names);
+		$this->setDropdown('誰を利用者に追加しまか？', $names);
 		$this->online_names = $names;
 	}
 
 	protected function customFormHandler(Player $player, array $data):void{
-		$selected = $this->online_names[$data];
+		$selected = $this->online_names[$data[0]];
 
 		if($this->region->issetUser($selected)){
 			$messae = $selected'さんは既に登録されています';
@@ -45,6 +45,6 @@ final class AddUserForm extends CustomForm{
 			} 
 		}
 
-		$player->sendForm(new MessageForm($message, $this));
+		$player->sendForm(new MessageForm($message, new MenuForm($player, $this->region)));
 	}
 }

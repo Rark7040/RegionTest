@@ -9,10 +9,7 @@ use pocketmine\Player;
 use rark7040\region_protector\Main;
 use rark7040\region_protector\region\Region;
 use rark7040\region_protector\form\modal\SpreadRegionForm;
-use rark7040\region_protector\form\custom\{
-	ChangeHolderForm,
-	MoveRegionForm
-};
+use rark7040\region_protector\form\custom\{ChangeHolderForm};
 
 final class MenuForm extends SimpleForm{
 
@@ -41,10 +38,11 @@ final class MenuForm extends SimpleForm{
 					$this->viewer_type = self::TYPE_HOLDER;
 					$this->setButton('<<Back');
 					$this->setButton('情報を見る');
+					$this->setButton('領域を編集する');
 					$this->setButton('利用者を編集する');
 					$this->setButton('保護範囲を拡大する');
-					$this->setButton('保護範囲を移動する');
 					$this->setButton('領域を譲渡する');
+					$this->setButton('領域を削除する');
 					return;
 				}
 				$this->viewer_type = self::TYPE_USER;
@@ -78,23 +76,27 @@ final class MenuForm extends SimpleForm{
 	private function holderProcess(int $data):void{
 
 		switch($data){
-			case 2;
+			case 2:
+				$this->viewer->sendForm(new EditRegionForm($this->region));
+			break;
+
+			case 3;
 				$this->viewer->sendForm(new EditUsersForm($this->region));
 			break;
 
-			case 3:
+			case 4:
 				$form = $region->getDistance() <= Main::getConfig()->get('max_distance')?
 					new SpreadRegionForm($this->region):
 					new MessageForm('これ以上領域を拡張できません', $this);
 				$this->viewer->sendForm($form);
 			break;
 
-			case 4:
-				$this->viewer->sendForm(new MoveRegionForm($this->region));
-			break;
-
 			case 5:
 				$this->viewer->sendForm(new ChangeHolderForm($this->region));
+			break;
+
+			case 6:
+				$this->viewer->sendForm(new DeleteRegionForm($this->region));
 			break;
 		}
 	}
